@@ -1,0 +1,6 @@
+User,Comment,Owner-Team,Functional,Pub-key,
+dbuser1,"Database user 1",DB01,1,,
+dbuser2,"Database user 1",DB01,1,,
+jamesbrown,"ADMINS/UNIX/ID111",ADM,0,"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAQQCo9+B test-a",
+emiliagreen,"ADMINS/UNIX/ID222",ADM,0,"ssh-rsa AAKSKDADNakbdskb2123AKJBDBAKKKADB20 test-b",
+webadmin,"Apache2 admin",ADM,1,"ssh-rsa ABBCBABKNALDeapisd232l3eqllaALLALNN test-c",
