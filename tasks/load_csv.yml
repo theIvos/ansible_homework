@@ -1,0 +1,8 @@
+---
+
+- name: Load CSV file
+  community.general.read_csv:
+    path: users.csv
+  register: all_users
+  delegate_to: localhost
+  become: false

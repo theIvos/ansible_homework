@@ -1,0 +1,24 @@
+---
+
+- name: Deploy users
+  hosts: webservers
+  become: true
+
+  tasks:
+
+    - name: Load CSV file
+      ansible.builtin.include_tasks: tasks/load_csv.yml
+
+    - name: Show all the users
+      debug:
+        msg: "User {{ item.User }} has email {{ item.Comment }}."
+      loop: "{{ all_users.list }}"
+
+    - name: Create users
+      ansible.builtin.user:
+        name: "{{ item.User  }}"
+        shell: /bin/bash
+        create_home: true
+        comment: "{{ item.Comment }}"
+        state: present
+      loop: "{{ all_users.list }}"
