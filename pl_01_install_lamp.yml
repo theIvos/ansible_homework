@@ -1,0 +1,29 @@
+---
+
+- name: Install LAMP stack
+  hosts: webservers
+  become: true
+
+  tasks:
+
+    - name: Install LAMP on Debian
+      ansible.builtin.include_tasks: tasks/lamp_debian.yml
+      when: ansible_os_family == "Debian"
+
+    - name: Install LAMP on RHEL
+      ansible.builtin.include_tasks: tasks/lamp_rhel.yml
+      when: ansible_os_family == "RedHat"
+
+    - name: Register hostname
+      ansible.builtin.command: hostname
+      register: hostname_name
+
+    - name: Create index page
+      ansible.builtin.copy:
+        dest: /var/www/html/index.php
+        content: |
+          <html>
+          <head><title> LAMP stack in ON </title></head>
+          <body><h1>Hello from "{{ hostname_name.stdout }}" page!</h1></body>
+          </html>
+        mode: '0644'
