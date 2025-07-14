@@ -14,7 +14,7 @@
         name: "{{ item.User  }}"
         shell: /bin/bash
         create_home: true
-        comment: "{{ item.Comment }}"
+        comment: "{{ item.Comment }} -team {{ item['Owner-Team'] }}"
         state: present
       loop: "{{ all_users.list }}"
 
@@ -27,7 +27,7 @@
       when: item['Pub-key'] is defined and (item['Pub-key'] | trim) !=''
 
     - name: Create a local folder for storing keys for functional users
-      file:
+      ansible.builtin.file:
         path: "./files/usr_keys/"
         state: directory
       delegate_to: localhost
@@ -45,7 +45,7 @@
       become: false
 
     - name: Create ssh folder for functional users
-      file:
+      ansible.builtin.file:
         path: "/home/{{ item.User }}/.ssh"
         state: directory
         mode: "0700"
@@ -69,4 +69,31 @@
         state: present
       loop: "{{ all_users.list }}"
       when: item.Functional == '1'
+
+    - name: Lock and expire users without keys
+      ansible.builtin.user:
+        name: "{{ item.User }}"
+        state: present
+        password_lock: true
+        expires: 1
+      loop: "{{ all_users.list }}"
+      when: (item['Pub-key'] | trim == '') and (item.Functional == '0')
+
+        #  - name: ROLLBACK Lock and expire users without keys
+        #    ansible.builtin.user:
+        #      name: "{{ item.User }}"
+        #      state: present
+        #      password_lock: false
+        #      expires: -1
+        #    loop: "{{ all_users.list }}"
+        #    when: (item['Pub-key'] | trim == ')' and (item.Functional == '0')
+    
+    - name: Set no password login only ssh keys
+      ansible.builtin.include_tasks: ./tasks/no_ps_log.yml
+
+  handlers:
+    - name: Restart sshd
+      ansible.builtin.service:
+        name: "{{ ssh_demon_name }}"
+        state: restarted
 

@@ -1,0 +1,31 @@
+---
+
+- name: Detect ssh demon
+  ansible.builtin.set_fact:
+    ssh_demon_name: "{{ 'ssh' if ansible_facts['distribution'] in ['Debian', 'LinuxMint'] else 'sshd' }}"
+
+- name: No password login allowed
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+    state: present
+    backup: yes
+  notify: Restart sshd
+
+- name: Disable challenge login
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^ChallengeResponseAuthentication'
+    line: 'ChallengeResponseAuthentication no'
+    state: present
+  notify: Restart sshd
+
+- name: Enable public key login
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PubkeyAuthentication'
+    line: 'PubkeyAuthentication yes'
+    state: present
+  notify: Restart sshd
+
