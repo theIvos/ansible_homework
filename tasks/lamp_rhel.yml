@@ -11,6 +11,7 @@
       - mariadb-server
       - php
       - php-mysqlnd
+    state: present
 
 - name: Start Apache demon
   ansible.builtin.service:
