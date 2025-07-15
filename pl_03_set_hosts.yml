@@ -1,0 +1,25 @@
+---
+
+- name: Hosts setup
+  hosts: all
+  become: true
+
+  tasks:
+
+    - name: Set hostname if hostname is localhost
+      ansible.builtin.include_tasks: tasks/set_hostname.yml
+      when: ansible_hostname  == "localhost"
+
+    - name: Create all_hosts file
+      delegate_to: localhost
+      become: false
+      file:
+        path: ./files/all_hosts
+        state: touch
+
+    - name: Get all the hostnames
+      delegate_to: localhost
+      become: false
+      ansible.builtin.lineinfile:
+        path: ./files/all_hosts
+        line: "{{ inventory_hostname }} {{ ansible_hostname }}"

@@ -6,6 +6,10 @@
 
   tasks:
 
+    - name: Set hostname if hostname is localhost
+      ansible.builtin.include_tasks: tasks/set_hostname.yml
+      when: ansible_hostname  == "localhost"
+
     - name: Install LAMP on Debian
       ansible.builtin.include_tasks: tasks/lamp_debian.yml
       when: ansible_os_family == "Debian"
