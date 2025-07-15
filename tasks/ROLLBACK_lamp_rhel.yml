@@ -1,0 +1,32 @@
+---
+
+- name: Update cache
+  ansible.builtin.dnf:
+    update_cache: true
+
+- name: Remove full LAMP stack
+  ansible.builtin.dnf:
+    name:
+      - httpd
+      - mariadb-server
+      - php
+      - php-mysqlnd
+    state: absent
+
+- name: Get the facts about services
+  ansible.builtin.service_facts:
+
+- name: Stop RHEL Apache
+  ansible.builtin.service:
+    name: httpd
+    state: stopped
+    enabled: false
+  when: "'httpd.service' in services"
+
+- name: Stop RHEL mariaDB
+  ansible.builtin.service:
+    name: mariadb
+    state: stopped
+    enabled: false
+  when: "'mariadb.service' in services"
+
