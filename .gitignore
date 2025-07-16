@@ -6,3 +6,5 @@ remove_users_backup
 .remove_users_backup
 files/all_hosts
 files/rollback_files
+ROLLBACK_pl_02_deploy_users.yml_BACKUP
+no_ps_log.yml_BACKUP

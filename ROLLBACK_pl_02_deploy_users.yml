@@ -1,4 +1,4 @@
-- name: Deploy SSH Keys
+- name: ROLLBACK Deploy SSH Keys
   hosts: webservers
   become: true
 
@@ -26,34 +26,28 @@
     ansible.builtin.set_fact:
       ssh_demon_name: "{{ 'ssh' if ansible_facts['distribution'] in ['Debian', 'Linux Mint'] else 'sshd' }}"
 
-  - name: Password login allowed
-    ansible.builtin.lineinfile:
-      path: /etc/ssh/sshd_config
-      regexp: '^PasswordAuthentication'
-      line: 'PasswordAuthentication yes'
-      state: present
-      backup: yes
+  - name: Replace the /etc/ssh/sshd_config  with the original one
+    ansible.builtin.copy:
+      src: files/rollback_files/etc_ssh_sshd_config_{{ inventory_hostname }}.bkp
+      dest: /etc/ssh/sshd_config
+      owner: root
+      group: root
+      mode: '0644'
     notify: Restart sshd
 
-  - name: Enable challenge login
-    ansible.builtin.lineinfile:
-      path: /etc/ssh/sshd_config
-      regexp: '^ChallengeResponseAuthentication'
-      line: 'ChallengeResponseAuthentication yes'
-      state: present
-    notify: Restart sshd
+  - name: Delete the backup files for played hosts
+    delegate_to: localhost
+    become: false
+    ansible.builtin.file:
+      path: "files/rollback_files/etc_ssh_sshd_config_{{ inventory_hostname }}.bkp"
+      state: absent
+    loop: "{{ ansible_play_batch }}"
 
-  - name: Enable public key login
-    ansible.builtin.lineinfile:
-      path: /etc/ssh/sshd_config
-      regexp: '^PubkeyAuthentication'
-      line: 'PubkeyAuthentication yes'
-      state: present
-    notify: Restart sshd
+  - name: Delete folder rollback_files in case its empty
+    ansible.builtin.include_tasks: tasks/remove_empty_rollback_folder.yml
 
   handlers:
     - name: Restart sshd
       ansible.builtin.service:
         name: "{{ ssh_demon_name }}"
         state: restarted
-
