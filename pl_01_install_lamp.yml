@@ -18,6 +18,10 @@
       ansible.builtin.include_tasks: tasks/lamp_rhel.yml
       when: ansible_os_family == "RedHat"
 
+    - name: Install LAMP on others
+      ansible.builtin.include_tasks: tasks/lamp_general.yml
+      when: ansible_os_family not in ['RedHat', 'Debian']
+
     - name: Create index page
       ansible.builtin.copy:
         dest: /var/www/html/index.php
