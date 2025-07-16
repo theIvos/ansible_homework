@@ -52,3 +52,28 @@
         path: /etc/hosts
         marker: "# {mark} ansible added hosts"
         block: "{{ hosts_to_add.content | b64decode }}"
+
+    - name: Delete the all_hosts file
+      delegate_to: localhost
+      become: false
+      ansible.builtin.file:
+        path: files/all_hosts
+        state: absent
+
+    - name: Get hostnames for ping
+      set_fact:
+        list_of_hostnames: "{{ (hosts_to_add.content | b64decode).split('\n') | select | map('split') | map('last') | list }}"
+
+    - name: Ping the hostnames
+      ansible.builtin.command: "ping -c 1 {{ item }}"
+      register: pinged
+      loop: "{{ list_of_hostnames }}"
+      when: item != ansible_hostname
+      ignore_errors: true
+
+    - name: Check ping
+      ansible.builtin.debug:
+        msg: "Ping {{ item.item }} was {{ 'successful' if item.rc is defined and item.rc == 0 else 'not successful'}}"
+      loop: "{{ pinged.results }}"
+      when: item.item != ansible_hostname
+

@@ -4,3 +4,8 @@
   hostname:
     name: "localhost-{{ inventory_hostname | regex_replace('\\.','-') }}-{{ ansible_distribution | regex_replace(' ','-')}}"
 
+- name: Create checkpoint file
+  ansible.builtin.file:
+    path: /etc/hostname_was_changed
+    state: touch
+    mode: '0644'
