@@ -24,4 +24,33 @@
     name: mariadb
     state: started
     enabled: true
+
+- name: Create rollback folder
+  delegate_to: localhost
+  become: false
+  run_once: false  # In case of more hostnames can be set to true to make playbook more swift
+  ansible.builtin.file:
+    path: files/rollback_files
+    state: directory
+    mode: '0755'
+
+- name: Make backup for /etc/firewalld_conf
+  ansible.builtin.fetch:
+    src: /etc/firewalld/firewalld.conf
+    dest: files/rollback_files/etc_firewalld_conf_{{ inventory_hostname }}.bkp
+    flat: yes
+    
+- name: Allow port 80 for http
+  ansible.posix.firewalld:
+    service: http
+    permanent: true
+    state: enabled
+    immediate: true
+
+- name: Allow port 443 for https
+  ansible.posix.firewalld:
+    service: https
+    permanent: true
+    state: enabled
+    immediate: true
     

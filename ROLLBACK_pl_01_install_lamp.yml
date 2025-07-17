@@ -19,29 +19,6 @@
         path: /var/www/html/index.php
         state: absent
 
-    - name: Replace the /etc/firewalld.conf  with the original one
-      ansible.builtin.copy:
-        src: files/rollback_files/etc_firewalld_conf_{{ inventory_hostname }}.bkp
-        dest: /etc/firewalld/firewalld.conf
-        owner: root
-        group: root
-        mode: '0644'
-
-    - name: Restart firewalld
-      ansible.builtin.systemd:
-        name: firewalld
-        state: restarted
-
-    - name: Delete the backup files
-      delegate_to: localhost
-      become: false
-      ansible.builtin.file:
-        path: "files/rollback_files/etc_firewalld_conf_{{ inventory_hostname }}.bkp"
-        state: absent
-
-    - name: Delete folder rollback_files in case its empty
-      ansible.builtin.include_tasks: tasks/remove_empty_rollback_folder.yml
-
 
           #  handlers:
           #    - ansible.builtin.import_tasks: handlers/ROLLBACK_lamp_rhel.yml
