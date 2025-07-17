@@ -1,0 +1,7 @@
+---
+
+- name: Install LAMP stack
+  hosts: webservers
+  become: true
+  roles:
+    - ROLLBACK_install_lamp

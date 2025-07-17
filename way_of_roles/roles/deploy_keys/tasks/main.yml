@@ -1,0 +1,25 @@
+---
+
+- name: Load CSV file
+  ansible.builtin.include_tasks: ../tasks/load_csv.yml
+
+- name: Deploy ssh keys for functional users
+  ansible.posix.authorized_key:
+    user: "{{ item.User }}"
+    key: "{{ lookup('file', 'files/usr_keys/id_' + item.User + '.pub') }}"
+    state: present
+  loop: "{{ all_users.list }}"
+  when: item.Functional == '1'
+
+- name: Lock and expire users without keys
+  ansible.builtin.user:
+    name: "{{ item.User }}"
+    state: present
+    password_lock: true
+    expires: 1
+  loop: "{{ all_users.list }}"
+  when: (item['Pub-key'] | trim == '') and (item.Functional == '0')
+
+- name: Set no password login only ssh keys
+  ansible.builtin.include_tasks: no_ps_log.yml
+

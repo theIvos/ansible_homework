@@ -1,0 +1,46 @@
+---
+
+- name: Detect ssh demon
+  ansible.builtin.set_fact:
+    ssh_demon_name: "{{ 'ssh' if ansible_facts['distribution'] in ['Debian', 'Linux Mint'] else 'sshd' }}"
+
+- name: Create rollback folder
+  delegate_to: localhost
+  become: false
+  run_once: false  # In case of more hostnames can be set to true to make playbook more swift
+  ansible.builtin.file:
+    path: files/rollback_files
+    state: directory
+    mode: '0755'
+
+- name: Make backup for /etc/ssh/sshd_config
+  ansible.builtin.fetch:
+    src: /etc/ssh/sshd_config
+    dest: files/rollback_files/etc_ssh_sshd_config_{{ inventory_hostname }}.bkp
+    flat: yes
+
+- name: No password login allowed
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+    state: present
+    backup: yes
+  notify: Restart sshd
+
+- name: Disable challenge login
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^ChallengeResponseAuthentication'
+    line: 'ChallengeResponseAuthentication no'
+    state: present
+  notify: Restart sshd
+
+- name: Enable public key login
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PubkeyAuthentication'
+    line: 'PubkeyAuthentication yes'
+    state: present
+  notify: Restart sshd
+

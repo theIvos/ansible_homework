@@ -1,0 +1,55 @@
+---
+
+- name: Update cache
+  ansible.builtin.dnf:
+    update_cache: true
+
+- name: Remove full LAMP stack
+  ansible.builtin.dnf:
+    name:
+      - httpd
+      - mariadb-server
+      - php
+      - php-mysqlnd
+    state: absent
+
+- name: Get the facts about services
+  ansible.builtin.service_facts:
+
+- name: Stop RHEL Apache
+  ansible.builtin.service:
+    name: httpd
+    state: stopped
+    enabled: false
+  when: "'httpd.service' in services"
+
+- name: Stop RHEL mariaDB
+  ansible.builtin.service:
+    name: mariadb
+    state: stopped
+    enabled: false
+  when: "'mariadb.service' in services"
+
+- name: Replace the /etc/firewalld.conf  with the original one
+  ansible.builtin.copy:
+    src: files/rollback_files/etc_firewalld_conf_{{ inventory_hostname }}.bkp
+    dest: /etc/firewalld/firewalld.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Restart firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    state: restarted
+
+- name: Delete the backup files
+  delegate_to: localhost
+  become: false
+  ansible.builtin.file:
+    path: "files/rollback_files/etc_firewalld_conf_{{ inventory_hostname }}.bkp"
+    state: absent
+
+- name: Delete folder rollback_files in case its empty
+  ansible.builtin.include_tasks: tasks/remove_empty_rollback_folder.yml
+

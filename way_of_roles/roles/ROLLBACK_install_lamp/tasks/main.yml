@@ -1,0 +1,14 @@
+---
+- name: Remove LAMP on Debian
+  ansible.builtin.include_tasks: ROLLBACK_lamp_debian.yml
+  when: ansible_os_family == "Debian"
+
+- name: Remove LAMP on RHEL
+  ansible.builtin.include_tasks: ROLLBACK_lamp_rhel.yml
+  when: ansible_os_family == "RedHat"
+
+- name: Remove index page
+  ansible.builtin.file:
+    path: /var/www/html/index.php
+    state: absent
+
