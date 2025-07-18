@@ -1,8 +1,0 @@
----
-
-- name: Load CSV file
-  community.general.read_csv:
-    path: "{{ csv_file | default('./files/users.csv') }}"
-  register: all_users
-  delegate_to: localhost
-  become: false
