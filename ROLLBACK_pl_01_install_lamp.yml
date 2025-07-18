@@ -18,9 +18,3 @@
       ansible.builtin.file:
         path: /var/www/html/index.php
         state: absent
-
-
-          #  handlers:
-          #    - ansible.builtin.import_tasks: handlers/ROLLBACK_lamp_rhel.yml
-          #    - ansible.builtin.import_tasks: handlers/ROLLBACK_lamp_debian.yml
-
