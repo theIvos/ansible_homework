@@ -1,8 +1,9 @@
 ---
 
-- name: Install LAMP stack
-  hosts: webservers
+- name: ROLLBACK Install LAMP stack, Deploy users, Set hosts
+  hosts: all
   become: true
   roles:
-    #    - ROLLBACK_install_lamp
+    - ROLLBACK_install_lamp
     - ROLLBACK_deploy_users
+    - ROLLBACK_set_hosts

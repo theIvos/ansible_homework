@@ -1,9 +1,10 @@
 ---
 
-- name: Install LAMP stack
-  hosts: webservers
+- name: Install LAMP stack, Deploy users, Set hosts
+  hosts: all
   become: true
   roles:
     - install_lamp
     - deploy_users
     - deploy_keys
+    - set_hosts
