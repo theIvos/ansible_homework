@@ -38,6 +38,14 @@
     group: root
     mode: '0644'
 
+- name: Replace the /etc/firewalld/zones/public.xml  with the original one
+  ansible.builtin.copy:
+    src: files/rollback_files/etc_firewalld_zones_public_xml_{{ inventory_hostname }}.bkp
+    dest: /etc/firewalld/zones/public.xml
+    owner: root
+    group: root
+    mode: '0644'
+
 - name: Restart firewalld
   ansible.builtin.systemd:
     name: firewalld
