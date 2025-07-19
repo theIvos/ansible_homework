@@ -1,0 +1,18 @@
+---
+
+- name: Check if checkpoint file for hostname exists
+  ansible.builtin.stat:
+    path: /etc/hostname_was_changed
+  register: checkpoint_file
+
+- name: Set hostname if hostname is localhost
+  ansible.builtin.hostname:
+    name: "localhost"
+  when: checkpoint_file.stat.exists
+
+- name: Delete the checkpoint file
+  ansible.builtin.file:
+    path: /etc/hostname_was_changed
+    state: absent
+  when: checkpoint_file.stat.exists
+

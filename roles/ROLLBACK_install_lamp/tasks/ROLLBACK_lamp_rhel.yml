@@ -55,9 +55,8 @@
   delegate_to: localhost
   become: false
   ansible.builtin.file:
-    path: "files/rollback_files/etc_firewalld_conf_{{ inventory_hostname }}.bkp"
+    path: "{{ item }}"
     state: absent
-
-- name: Delete folder rollback_files in case its empty
-  ansible.builtin.include_tasks: ../tasks/remove_empty_rollback_folder.yml
-
+  loop:
+    - "files/rollback_files/etc_firewalld_conf_{{ inventory_hostname }}.bkp"
+    - "files/rollback_files/etc_firewalld_zones_public_xml_{{ inventory_hostname }}.bkp"
