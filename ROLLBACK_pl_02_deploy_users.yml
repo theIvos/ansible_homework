@@ -43,6 +43,16 @@
       state: absent
     loop: "{{ ansible_play_batch }}"
 
+  - name: Remove functional users keys from .ssh/config
+    delegate_to: localhost
+    become: false
+    ansible.builtin.blockinfile:
+      path: "{{ lookup('env','HOME') }}/.ssh/config"
+      marker: "# {mark} ANSIBLE ADDED USER {{ item.User}}-{{ inventory_hostname }}"
+      state: absent
+    loop: "{{ all_users.list }}"
+    when: item.Functional == '1'
+
   - name: Delete folder rollback_files in case its empty
     ansible.builtin.include_tasks: tasks/remove_empty_rollback_folder.yml
 

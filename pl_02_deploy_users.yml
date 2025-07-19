@@ -44,6 +44,24 @@
       delegate_to: localhost
       become: false
 
+    - name: Set ssh config for no need to specify path for user keys
+      delegate_to: localhost
+      become: false
+      ansible.builtin.blockinfile:
+        path: "{{ lookup('env','HOME') }}/.ssh/config"
+        marker: "# {mark} ANSIBLE ADDED USER {{ item.User}}-{{ inventory_hostname }}" 
+        block: |
+          Host "{{ inventory_hostname }}"
+            HostName "{{ inventory_hostname }}"
+            User "{{ item.User }}"
+            IdentityFile "{{ playbook_dir }}/files/usr_keys/id_{{ item.User }}"
+        create: yes
+        mode: '0600'
+      loop: "{{ all_users.list }}"
+      when: item.Functional == '1'
+
+
+
     - name: Create ssh folder for functional users
       ansible.builtin.file:
         path: "/home/{{ item.User }}/.ssh"
