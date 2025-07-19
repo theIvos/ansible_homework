@@ -39,7 +39,13 @@
     src: /etc/firewalld/firewalld.conf
     dest: files/rollback_files/etc_firewalld_conf_{{ inventory_hostname }}.bkp
     flat: yes
-    
+
+- name: Make backup for /etc/firewalld/zones/public.xml
+  ansible.builtin.fetch:
+    src: /etc/firewalld/zones/public.xml
+    dest: files/rollback_files/etc_firewalld_zones_public_xml_{{ inventory_hostname }}.bkp
+    flat: yes
+
 - name: Allow port 80 for http
   ansible.posix.firewalld:
     service: http
