@@ -18,3 +18,9 @@
       ansible.builtin.file:
         path: /var/www/html/index.php
         state: absent
+
+    - name: Check if checkpoint file for hostname exists
+      ansible.builtin.include_tasks: tasks/set_hostname_back.yml
+
+    - name: Delete folder rollback_files in case its empty
+      ansible.builtin.include_tasks: tasks/remove_empty_rollback_folder.yml
