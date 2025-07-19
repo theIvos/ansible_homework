@@ -1,7 +1,7 @@
 ---
 
 - name: Install LAMP stack
-  hosts: webservers
+  hosts: all
   become: true
 
   tasks:

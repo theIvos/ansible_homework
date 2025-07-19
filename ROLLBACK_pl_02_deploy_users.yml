@@ -1,5 +1,5 @@
 - name: ROLLBACK Deploy SSH Keys
-  hosts: webservers
+  hosts: all
   become: true
 
   tasks:

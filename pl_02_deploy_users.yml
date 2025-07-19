@@ -1,7 +1,7 @@
 ---
 
 - name: Deploy users
-  hosts: webservers
+  hosts: all
   become: true
 
   tasks:
@@ -54,7 +54,7 @@
       loop: "{{ all_users.list }}"
 
 - name: Deploy SSH Keys
-  hosts: webservers
+  hosts: all
   become: true
 
   tasks:
@@ -78,15 +78,6 @@
         expires: 1
       loop: "{{ all_users.list }}"
       when: (item['Pub-key'] | trim == '') and (item.Functional == '0')
-
-        #  - name: ROLLBACK Lock and expire users without keys
-        #    ansible.builtin.user:
-        #      name: "{{ item.User }}"
-        #      state: present
-        #      password_lock: false
-        #      expires: -1
-        #    loop: "{{ all_users.list }}"
-        #    when: (item['Pub-key'] | trim == ')' and (item.Functional == '0')
     
     - name: Set no password login only ssh keys
       ansible.builtin.include_tasks: ./tasks/no_ps_log.yml
