@@ -83,7 +83,7 @@
     - name: Deploy ssh keys for functional users
       ansible.posix.authorized_key:
         user: "{{ item.User }}"
-        key: "{{ lookup('file', 'files/usr_keys/id_' + item.User + '.pub') }}"
+        key: "{{ lookup('file',playbook_dir + '/files/usr_keys/id_' + item.User + '.pub') }}"
         state: present
       loop: "{{ all_users.list }}"
       when: item.Functional == '1'
