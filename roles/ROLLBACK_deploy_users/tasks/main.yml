@@ -1,7 +1,7 @@
 ---
 
 - name: Load CSV file with users
-  ansible.builtin.include_tasks: ../tasks/load_csv.yml
+  ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/load_csv.yml"
 
 - name: Remove users
   ansible.builtin.user:
@@ -12,11 +12,21 @@
 
 - name: Remove user keys from local folder
   ansible.builtin.file:
-    path: ./files/usr_keys
+    path: "{{ playbook_dir }}/files/usr_keys"
     state: absent
   delegate_to: localhost
   become: false
   run_once: true
+
+- name: Remove functional users keys from .ssh/config
+  delegate_to: localhost
+  become: false
+  ansible.builtin.blockinfile:
+    path: "{{ lookup('env','HOME') }}/.ssh/config"
+    marker: "# {mark} ANSIBLE ADDED USER {{ item.User}}-{{ inventory_hostname }}"
+    state: absent
+  loop: "{{ all_users.list }}"
+  when: item.Functional == '1'
 
 - name: Detect ssh demon
   ansible.builtin.set_fact:
@@ -24,7 +34,7 @@
 
 - name: Replace the /etc/ssh/sshd_config  with the original one
   ansible.builtin.copy:
-    src: files/rollback_files/etc_ssh_sshd_config_{{ inventory_hostname }}.bkp
+    src: "{{ playbook_dir}}/files/rollback_files/etc_ssh_sshd_config_{{ inventory_hostname }}.bkp"
     dest: /etc/ssh/sshd_config
     owner: root
     group: root
@@ -35,9 +45,9 @@
   delegate_to: localhost
   become: false
   ansible.builtin.file:
-    path: "files/rollback_files/etc_ssh_sshd_config_{{ inventory_hostname }}.bkp"
+    path: "{{ playbook_dir }}/files/rollback_files/etc_ssh_sshd_config_{{ inventory_hostname }}.bkp"
     state: absent
   loop: "{{ ansible_play_batch }}"
 
 - name: Delete folder rollback_files in case its empty
-  ansible.builtin.include_tasks: ../tasks/remove_empty_rollback_folder.yml
+  ansible.builtin.include_tasks: "{{ playbook_dir}}/tasks/remove_empty_rollback_folder.yml"

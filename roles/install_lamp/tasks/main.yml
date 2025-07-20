@@ -1,7 +1,7 @@
 ---
 
 - name: Set hostname if hostname is localhost
-  ansible.builtin.include_tasks: ../tasks/set_hostname.yml
+  ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/set_hostname.yml"
   when: ansible_hostname  == "localhost"
 
 - name: Install LAMP on Debian

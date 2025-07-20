@@ -1,7 +1,7 @@
 ---
 
 - name: Load CSV file
-  ansible.builtin.include_tasks: ../tasks/load_csv.yml
+  ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/load_csv.yml"
 
 - name: Create users
   ansible.builtin.user:
@@ -22,14 +22,14 @@
 
 - name: Create a local folder for storing keys for functional users
   ansible.builtin.file:
-    path: "./files/usr_keys/"
+    path: "{{ playbook_dir }}/files/usr_keys/"
     state: directory
   delegate_to: localhost
   become: false
 
 - name: Generate keys for functional users
   community.crypto.openssh_keypair:
-    path: "./files/usr_keys/id_{{ item.User }}"
+    path: "{{ playbook_dir }}/files/usr_keys/id_{{ item.User }}"
     type: ed25519
     comment: "{{ item.User }}"
     force: false

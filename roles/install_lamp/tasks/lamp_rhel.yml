@@ -30,20 +30,20 @@
   become: false
   run_once: false  # In case of more hostnames can be set to true to make playbook more swift
   ansible.builtin.file:
-    path: files/rollback_files
+    path: "{{ playbook_dir }}/files/rollback_files"
     state: directory
     mode: '0755'
 
 - name: Make backup for /etc/firewalld_conf
   ansible.builtin.fetch:
     src: /etc/firewalld/firewalld.conf
-    dest: files/rollback_files/etc_firewalld_conf_{{ inventory_hostname }}.bkp
+    dest: "{{ playbook_dir }}/files/rollback_files/etc_firewalld_conf_{{ inventory_hostname }}.bkp"
     flat: yes
 
 - name: Make backup for /etc/firewalld/zones/public.xml
   ansible.builtin.fetch:
     src: /etc/firewalld/zones/public.xml
-    dest: files/rollback_files/etc_firewalld_zones_public_xml_{{ inventory_hostname }}.bkp
+    dest: "{{ playbook_dir }}/files/rollback_files/etc_firewalld_zones_public_xml_{{ inventory_hostname }}.bkp"
     flat: yes
 
 - name: Allow port 80 for http

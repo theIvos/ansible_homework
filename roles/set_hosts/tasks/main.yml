@@ -1,19 +1,19 @@
 - name: Set hostname if hostname is localhost
-  ansible.builtin.include_tasks: ../tasks/set_hostname.yml
+  ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/set_hostname.yml"
   when: ansible_hostname  == "localhost"
 
 - name: Create all_hosts file
   delegate_to: localhost
   become: false
   file:
-    path: ./files/all_hosts
+    path: "{{ playbook_dir }}/files/all_hosts"
     state: touch
 
 - name: Get all the hostnames
   delegate_to: localhost
   become: false
   ansible.builtin.lineinfile:
-    path: ./files/all_hosts
+    path: "{{ playbook_dir }}/files/all_hosts"
     line: "{{ inventory_hostname }} {{ ansible_hostname }}"
     state: present
     
@@ -22,21 +22,21 @@
   become: false
   run_once: false  # In case of more hostnames can be set to true to make playbook more swift
   ansible.builtin.file:
-    path: files/rollback_files
+    path: "{{ playbook_dir }}/files/rollback_files"
     state: directory
     mode: '0755'
 
 - name: Make backup for /etc/hosts
   ansible.builtin.fetch:
     src: /etc/hosts
-    dest: files/rollback_files/etc_hosts_{{ inventory_hostname }}.bkp
+    dest: "{{ playbook_dir }}/files/rollback_files/etc_hosts_{{ inventory_hostname }}.bkp"
     flat: yes
 
 - name: Load the hosts file
   delegate_to: localhost
   become: false
   ansible.builtin.slurp:
-    src: files/all_hosts
+    src: "{{ playbook_dir }}/files/all_hosts"
   register: hosts_to_add
 
 - name: Add new hosts into /etc/hosts
@@ -49,7 +49,7 @@
   delegate_to: localhost
   become: false
   ansible.builtin.file:
-    path: files/all_hosts
+    path: "{{ playbook_dir }}/files/all_hosts"
     state: absent
 
 - name: Get hostnames for ping

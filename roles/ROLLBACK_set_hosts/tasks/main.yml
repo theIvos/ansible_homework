@@ -1,6 +1,6 @@
 - name: Replace the /etc/hosts with the original one
   ansible.builtin.copy:
-    src: files/rollback_files/etc_hosts_{{ inventory_hostname }}.bkp
+    src: "{{ playbook_dir }}/files/rollback_files/etc_hosts_{{ inventory_hostname }}.bkp"
     dest: /etc/hosts
     owner: root
     group: root
@@ -10,13 +10,13 @@
   delegate_to: localhost
   become: false
   ansible.builtin.file:
-    path: "files/rollback_files/etc_hosts_{{ item }}.bkp"
+    path: "{{ playbook_dir }}/files/rollback_files/etc_hosts_{{ item }}.bkp"
     state: absent
   loop: "{{ ansible_play_batch }}"
 
 - name: Delete folder rollback_files in case its empty
-  ansible.builtin.include_tasks: ../tasks/remove_empty_rollback_folder.yml
+  ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/remove_empty_rollback_folder.yml"
 
 - name: Check if checkpoint file for hostname exists
-  ansible.builtin.include_tasks: ../tasks/set_hostname_back.yml
+  ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/set_hostname_back.yml"
 

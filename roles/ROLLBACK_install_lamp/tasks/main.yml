@@ -13,7 +13,7 @@
     state: absent
 
 - name: Delete folder rollback_files in case its empty
-  ansible.builtin.include_tasks: ../tasks/remove_empty_rollback_folder.yml
+  ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/remove_empty_rollback_folder.yml"
 
 - name: Check whether the hostname_was_changed file exists
-  ansible.builtin.include_tasks: ../tasks/set_hostname_back.yml
+  ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/set_hostname_back.yml"
