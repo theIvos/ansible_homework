@@ -9,14 +9,14 @@
   become: false
   run_once: false  # In case of more hostnames can be set to true to make playbook more swift
   ansible.builtin.file:
-    path: files/rollback_files
+    path: "{{ playbook_dir }}/files/rollback_files"
     state: directory
     mode: '0755'
 
 - name: Make backup for /etc/ssh/sshd_config
   ansible.builtin.fetch:
     src: /etc/ssh/sshd_config
-    dest: files/rollback_files/etc_ssh_sshd_config_{{ inventory_hostname }}.bkp
+    dest: "{{ playbook_dir }}/files/rollback_files/etc_ssh_sshd_config_{{ inventory_hostname }}.bkp"
     flat: yes
 
 - name: No password login allowed

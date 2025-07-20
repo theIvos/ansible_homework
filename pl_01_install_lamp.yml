@@ -7,19 +7,19 @@
   tasks:
 
     - name: Set hostname if hostname is localhost
-      ansible.builtin.include_tasks: tasks/set_hostname.yml
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/set_hostname.yml"
       when: ansible_hostname  == "localhost"
 
     - name: Install LAMP on Debian
-      ansible.builtin.include_tasks: tasks/lamp_debian.yml
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/lamp_debian.yml"
       when: ansible_os_family == "Debian"
 
     - name: Install LAMP on RHEL
-      ansible.builtin.include_tasks: tasks/lamp_rhel.yml
+      ansible.builtin.include_tasks: "{{ playbook_dir}}/tasks/lamp_rhel.yml"
       when: ansible_os_family == "RedHat"
 
     - name: Install LAMP on others
-      ansible.builtin.include_tasks: tasks/lamp_general.yml
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/lamp_general.yml"
       when: ansible_os_family not in ['RedHat', 'Debian']
 
     - name: Create index page

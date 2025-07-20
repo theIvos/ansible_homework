@@ -7,11 +7,11 @@
   tasks:
 
     - name: Remove LAMP on Debian
-      ansible.builtin.include_tasks: tasks/ROLLBACK_lamp_debian.yml
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/ROLLBACK_lamp_debian.yml"
       when: ansible_os_family == "Debian"
 
     - name: Remove LAMP on RHEL
-      ansible.builtin.include_tasks: tasks/ROLLBACK_lamp_rhel.yml
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/ROLLBACK_lamp_rhel.yml"
       when: ansible_os_family == "RedHat"
 
     - name: Remove index page
@@ -20,7 +20,7 @@
         state: absent
 
     - name: Check if checkpoint file for hostname exists
-      ansible.builtin.include_tasks: tasks/set_hostname_back.yml
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/set_hostname_back.yml"
 
     - name: Delete folder rollback_files in case its empty
-      ansible.builtin.include_tasks: tasks/remove_empty_rollback_folder.yml
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/remove_empty_rollback_folder.yml"
