@@ -29,9 +29,51 @@ Playbook 02 deploys the users from provided CSV file to the hosts and sets their
 
 #### pl_03_set_hosts.yml 
 -----------------------------
-Playbook pl_03_set_hosts set up the host machines to know each others by hostname and executes ping to each other to test it with following actions:
+Playbook pl_03_set_hosts sets up the host machines to know each others by hostname and executes ping to each other to test it with following actions:
 - if the hostname on the host machine is just 'localhost' it changes it to better identification
 - extracts hosts IPs and hostnames and saves it into temporary file
 - slurps the data and decodes them for inserting into /etc/hosts
 - pings the hosts by their hostnames except itself (this one is skipped)
 - provides the ping result with the debug message for user to check
+
+*! ALL PLAYBOOKS CREATES BACKUPS FOR THEIR ACTIONS SO THERE CAN BE EASY ROLLBACK DONE !*
+
+##### HOW TO ROLLBACK?
+Easily. Just run these ROLLBACK playbooks:
+- ROLLBACK_pl_01_install_lamp.yml
+- ROLLBACK_pl_02_deploy_users.yml
+- ROLLBACK_pl_03_set_hosts.yml
+
+*You don't have to do it on the order, just be sure that before you run the particular ROLLBACK you executed first its counterpart (for example ROLLBACK_pl_03_set_hosts.yml is a counterpart from pl_03_set_hosts.yml - you can say just be seeing that the name is the same only ROLLBACK is at the beginning)*
+
+### How to run all these playbooks?
+*Before first run of the playbooks is recommended to run the file 'script_00.sh' which installs ansible galaxy collections to be sure that you have all required modules. When it's installed you don't have to run it again.*
+
+- First check the inventory file hosts.ini in the folder 'files/hosts.ini' and edit according to required notes and users which have ssh access in.
+Now you are ready to run the playbooks:
+
+#### pl_01_install_lamp.yml
+from CLI execute command:
+`ansible-playbook pl_01_install_lamp.yml`
+
+#### ROLLBACK_pl_01_install_lamp.yml
+`ansible-playbook ROLLBACK_pl_01_install_lamp.yml`
+
+#### pl_02_deploy_users.yml
+`ansible-playbook pl_02_deploy_users.yml`
+*INFO: Without specifying the file for CSV file containing the users to deploy, the default will be taken as 'files/users.csv' so you could edit that file OR specify different one with the following command:*
+`ansible-playbook -e csv_file=PATH/TO/FILE pl_02_deploy_users.yml`
+
+#### ROLLBACK_pl_02_deploy_users.yml
+`ansible-playbook ROLLBACK_pl_02_deploy_users.yml`
+*INFO: Ideally use the same CSV file as when you ran the deploy playbook. If you have specified different file than the default one, specify it also here:*
+`ansible-playbook -e csv_file=PATH/TO/FILE pl_02_deploy_users.yml` 
+
+#### pl_03_set_hosts.yml
+`ansible-playbook pl_03_set_hosts.yml`
+
+#### ROLLBACK_pl_03_set_hosts.yml
+`ansible-playbook ROLLBACK_pl_03_set_hosts.yml`
+
+
+##### The playbooks doesnt need to be run in order, they are not dependent on each other (only the ROLLBACK counterparts).
