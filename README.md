@@ -52,9 +52,9 @@ Easily. Just run these ROLLBACK playbooks:
 - First check the inventory file hosts.ini in the folder 'files/hosts.ini' and edit according to required notes and users which have ssh access in.
 Now you are ready to run the playbooks:
 
-#### pl_01_install_lamp.yml
 from CLI execute command:
 
+#### pl_01_install_lamp.yml
 `ansible-playbook pl_01_install_lamp.yml`
 
 #### ROLLBACK_pl_01_install_lamp.yml
