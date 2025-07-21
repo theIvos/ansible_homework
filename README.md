@@ -46,4 +46,12 @@ Easily. Just run this ROLLBACK playbook:
 ### How to run these playbooks?
 *Before first run of the playbooks is recommended to run the file 'script_00.sh' which installs ansible galaxy collections to be sure that you have all required modules. When it's installed you don't have to run it again.*
 
+from CLI execute command:
+
+#### roles_playbook.yml
+`ansible-playbook roles_playbook.yml`
+
+#### ROLLBACK_roles_playbook.yml
+`ansible-playbook ROLLBACK_roles_playbook.yml`
+
 ##### NOTICE: Since you don't run the particular-tasks playbooks, you don't have the option to specify the CSV file for deploying users. Therefore if you want to have some other data you will have to edit the defualt file ./files/users.csv.
