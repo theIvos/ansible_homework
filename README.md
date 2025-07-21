@@ -54,6 +54,7 @@ Now you are ready to run the playbooks:
 
 #### pl_01_install_lamp.yml
 from CLI execute command:
+
 `ansible-playbook pl_01_install_lamp.yml`
 
 #### ROLLBACK_pl_01_install_lamp.yml
