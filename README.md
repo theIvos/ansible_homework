@@ -46,6 +46,9 @@ Easily. Just run this ROLLBACK playbook:
 ### How to run these playbooks?
 *Before first run of the playbooks is recommended to run the file 'script_00.sh' which installs ansible galaxy collections to be sure that you have all required modules. When it's installed you don't have to run it again.*
 
+- First check the inventory file hosts.ini in the folder 'files/hosts.ini' and edit according to required nodes and users which have ssh access in.
+Now you are ready to run the playbooks:
+
 from CLI execute command:
 
 #### roles_playbook.yml
