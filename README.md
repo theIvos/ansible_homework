@@ -62,12 +62,16 @@ from CLI execute command:
 
 #### pl_02_deploy_users.yml
 `ansible-playbook pl_02_deploy_users.yml`
+
 *INFO: Without specifying the file for CSV file containing the users to deploy, the default will be taken as 'files/users.csv' so you could edit that file OR specify different one with the following command:*
+
 `ansible-playbook -e csv_file=PATH/TO/FILE pl_02_deploy_users.yml`
 
 #### ROLLBACK_pl_02_deploy_users.yml
 `ansible-playbook ROLLBACK_pl_02_deploy_users.yml`
+
 *INFO: Ideally use the same CSV file as when you ran the deploy playbook. If you have specified different file than the default one, specify it also here:*
+
 `ansible-playbook -e csv_file=PATH/TO/FILE pl_02_deploy_users.yml` 
 
 #### pl_03_set_hosts.yml
