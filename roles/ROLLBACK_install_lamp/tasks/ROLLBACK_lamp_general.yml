@@ -1,0 +1,33 @@
+---
+
+- name: Set vars for general distros
+  ansible.builtin.set_fact:
+    apache_app: "{{ 'apache2' if ansible_os_family == 'Suse' else ('apache' if ansible_os_family == 'Archlinux' else 'httpd') }}"
+    apache_demon : "{{ 'apache2' if ansible_os_family == 'Suse' else 'httpd' }}"
+    mariadb_app: "{{ 'mariadb' if ansible_distribution == 'Archlinux' else 'mariadb-server' }}"  
+
+- name: Update cache
+  ansible.builtin.package:
+    update_cache: true
+
+- name: Stop Apache demon
+  ansible.builtin.service:
+    name: "{{ apache_demon }}"
+    state: stopped
+    enabled: false
+
+- name: Stop MariaDB demon
+  ansible.builtin.service:
+    name: mariadb
+    state: stopped
+    enabled: false
+
+
+- name: remove full LAMP stack
+  ansible.builtin.package:
+    name:
+      - "{{ apache_app }}"
+      - "{{ mariadb_app }}"
+      - php
+    state: absent
+
